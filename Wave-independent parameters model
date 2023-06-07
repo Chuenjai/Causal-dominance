@@ -110,7 +110,7 @@ summary(goricaResult1)
 # the model name, the hypothesis or hypotheses, and then the argument comparison and the argument type. The `comparison = ``complement''' part implies    
 # that the complement is used (and does not need to be specified). The alternative options are `none' and `unconstrained'. The first can be used when the 
 # set of interest covers the whole space: e.g., H1a : `abs(beta) < abs(gamma)' versus H2 : `abs(beta) > abs(gamma)', which is evaluated here.             
-Notably, in case of a bivariate (RI-)CLPM model one can specify the complement of the causal dominance hypothesis, while for other hypotheses or causal 
+# Notably, in case of a bivariate (RI-)CLPM model one can specify the complement of the causal dominance hypothesis, while for other hypotheses or causal 
 # dominance hypotheses in more-variate (RI-)CLPM models it is often impossible. Then, this argument comes in handy. The second alternative (i.e.,         
 # `unconstrained') can be used when there is more than one hypothesis of interest, that is, there are competing hypotheses, which together do not cover   
 # the whole space; for instance, when H3 and H4 are competing hypotheses. Then, the unconstrained is used as a failsafe hypothesis. If H3                 
