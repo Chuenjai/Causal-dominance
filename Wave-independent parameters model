@@ -3,7 +3,7 @@ How to evaluate causal dominance in lagged effects models
 
 # R code to run a `wave-independent' parameters model
 
-# We display the R code for applying the GORICA to a bivariate wave-independent parameters RI-CLPM with three waves, like Masselink et al.(2018) use,     
+# We display the R code for applying the GORICA to a bivariate wave-independent parameters RI-CLPM with three waves,     
 # using the R packages lavaan, restriktor, devtools, and ICweights.
 
 # Step 0: Install the packages in R by executing the following:
