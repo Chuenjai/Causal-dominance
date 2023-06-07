@@ -3,7 +3,8 @@ How to evaluate causal dominance in lagged effects models
 
 # R code to run a `wave-independent' parameters model
 
-# We display the R code for applying the GORICA to a bivariate wave-independent parameters RI-CLPM with three waves, like Masselink et al.(2018) use,     # using the R packages lavaan, restriktor, devtools, and ICweights.
+# We display the R code for applying the GORICA to a bivariate wave-independent parameters RI-CLPM with three waves, like Masselink et al.(2018) use,     
+# using the R packages lavaan, restriktor, devtools, and ICweights.
 
 # Step 0: Install the packages in R by executing the following:
 
@@ -28,13 +29,17 @@ data <- read.table("data.dat")
 
 data <- scale(data)
 
-# Notably, we assume that the standardized lagged effects do not change over time. Therefore, we will restrict them to be the same for all pairs of       # consecutive time-points. This implies that, in Figure 2,  $\alpha^*_{3}$ equals $\alpha^*_{2}$ and so on. The lavaan package restricts the              # unstandardized estimates, which are not comparable. Hence, we need to standardize the data first.
+# Notably, we assume that the standardized lagged effects do not change over time. Therefore, we will restrict them to be the same for all pairs of       
+# consecutive time-points. This implies that, in Figure 2,  $\alpha^*_{3}$ equals $\alpha^*_{2}$ and so on. The lavaan package restricts the              
+# unstandardized estimates, which are not comparable. Hence, we need to standardize the data first.
 
 # Step 3: Specify the causal dominance hypothesis of interest.
 
 H1a <- "abs(beta) < abs(gamma)" 
 
-# Notably, make sure to label the standardized cross-lagged effects as beta and gamma in Step 4. The use of abs() ensures that the ordering               # of the absolute strengths of standardized effects are compared. This causal dominance hypothesis will be evaluated with the GORICA. It will be evaluated # against its complement, which we do not have to specify explicitly (see Step 6).
+# Notably, make sure to label the standardized cross-lagged effects as beta and gamma in Step 4. The use of abs() ensures that the ordering               
+# of the absolute strengths of standardized effects are compared. This causal dominance hypothesis will be evaluated with the GORICA. It will be evaluated 
+# against its complement, which we do not have to specify explicitly (see Step 6).
 
 # Step 4: Fit the RI-CLPM using the R package lavaan.
 
@@ -101,10 +106,20 @@ auto.var = F)
 goricaResult1 <- goric(riclpm1, H1a, comparison = "complement", type = "gorica")
 summary(goricaResult1)
 
-# After fitting the data with RI-CLPM using lavaan package in R (here, called `riclpm1') then the goric function will be used, starting with              # the model name, the hypothesis or hypotheses, and then the argument comparison and the argument type. The `comparison = ``complement''' part implies    # that the complement is used (and does not need to be specified). The alternative options are `none' and `unconstrained'. The first can be used when the # set of interest covers the whole space: e.g., H1a : `abs(beta) < abs(gamma)' versus H2 : `abs(beta) > abs(gamma)', which is evaluated here.             # Notably, in case of a bivariate (RI-)CLPM model one can specify the complement of the causal dominance hypothesis, while for other hypotheses or causal # dominance hypotheses in more-variate (RI-)CLPM models it is often impossible. Then, this argument comes in handy. The second alternative (i.e.,         # `unconstrained') can be used when there is more than one hypothesis of interest, that is, there are competing hypotheses, which together do not cover   # the whole space; for instance, when H3 and H4 are competing hypotheses. Then, the unconstrained is used as a failsafe hypothesis. If H3                 # and/or H4 are more supported than the Hunc, then at least one of them is not weak. In that case, the support for both hypotheses can be                  # meaningfully compared by inspecting the relative support, that is, the ratio of their GORICA weights. 
+# After fitting the data with RI-CLPM using lavaan package in R (here, called `riclpm1') then the goric function will be used, starting with              
+# the model name, the hypothesis or hypotheses, and then the argument comparison and the argument type. The `comparison = ``complement''' part implies    
+# that the complement is used (and does not need to be specified). The alternative options are `none' and `unconstrained'. The first can be used when the 
+# set of interest covers the whole space: e.g., H1a : `abs(beta) < abs(gamma)' versus H2 : `abs(beta) > abs(gamma)', which is evaluated here.             
+Notably, in case of a bivariate (RI-)CLPM model one can specify the complement of the causal dominance hypothesis, while for other hypotheses or causal 
+# dominance hypotheses in more-variate (RI-)CLPM models it is often impossible. Then, this argument comes in handy. The second alternative (i.e.,         
+# `unconstrained') can be used when there is more than one hypothesis of interest, that is, there are competing hypotheses, which together do not cover   
+# the whole space; for instance, when H3 and H4 are competing hypotheses. Then, the unconstrained is used as a failsafe hypothesis. If H3                 
+# and/or H4 are more supported than the Hunc, then at least one of them is not weak. In that case, the support for both hypotheses can be                  
+# meaningfully compared by inspecting the relative support, that is, the ratio of their GORICA weights. 
 
 # There are two options of computing the GORICA values and weights:
-# either using the model object (like in this step) or using the estimates by subtracting the (standardized) cross-lagged estimates yourself from the     # object (which will be demonstrated in Step 5 in Appendix B).
+# either using the model object (like in this step) or using the estimates by subtracting the (standardized) cross-lagged estimates yourself from the     
+# object (which will be demonstrated in Step 5 in Appendix B).
 
 # Below are the results for H1a and its complement.
 
@@ -118,7 +133,9 @@ summary(goricaResult1)
 
 # ---
 
-# Here, the GORICA weights are about equal. Therefore, H1a is only 0.502/0.498 = 1.008 times more supported than the complement of H1a. Hence,            # both hypotheses are supported equally. Since both hypotheses have equal complexity, this means that there is support for their overlap, which here means # their border. This implies that the cross-lagged effects are equal.
+# Here, the GORICA weights are about equal. Therefore, H1a is only 0.502/0.498 = 1.008 times more supported than the complement of H1a. Hence,            
+# both hypotheses are supported equally. Since both hypotheses have equal complexity, this means that there is support for their overlap, which here means 
+# their border. This implies that the cross-lagged effects are equal.
 
 # Step 6: Compute the penalty weights using the IC.weights() function from the ICweights package.
 
@@ -132,9 +149,14 @@ Penalty_weights <- IC.weights(2*goricaResult1$result[,3])$IC.weights
 # > Penalty_weights
 # [1] 0.5 0.5
 
-# Since the GORICA weights, in our example, resemble the penalty weights, there is evidence that indeed the overlap, here, boundary, of these hypotheses   # (i.e., stating that the two cross-lagged effects are equal) is true. Note that in this (bivariate) case, the complexity of the hypotheses are the same  # and thus result in penalty weights of 0.5 and 0.5. In the trivariate or more-variate case, the complexity of the hypotheses in the set often differ and # then it is less straightforward to see whether there is support for the boundary or not. In that case, it can be helpful to inspect the penalty weights # of the hypotheses as will be demonstrated next.
+# Since the GORICA weights, in our example, resemble the penalty weights, there is evidence that indeed the overlap, here, boundary, of these hypotheses   
+# (i.e., stating that the two cross-lagged effects are equal) is true. Note that in this (bivariate) case, the complexity of the hypotheses are the same  
+# and thus result in penalty weights of 0.5 and 0.5. In the trivariate or more-variate case, the complexity of the hypotheses in the set often differ and 
+# then it is less straightforward to see whether there is support for the boundary or not. In that case, it can be helpful to inspect the penalty weights 
+# of the hypotheses as will be demonstrated next.
 
-# In case of a tri-variate model: In this example, we will make use of one of the simulated data sets from the simulation in which in the population the  # cross-lagged effects are equal. In Step 3, one would then use H5 by using the following code:
+# In case of a tri-variate model: In this example, we will make use of one of the simulated data sets from the simulation in which in the population the  
+# cross-lagged effects are equal. In Step 3, one would then use H5 by using the following code:
 
 H5 <- "abs(phi12) < abs(phi21); abs(phi13) < abs(phi31); 
       abs(phi23) < abs(phi32)"
@@ -150,7 +172,9 @@ H5 <- "abs(phi12) < abs(phi21); abs(phi13) < abs(phi31);
 # complement   19.004    5.617  -26.774           0.249
 # ---
 
-# Here, we see GORICA weights (gorica.weights) that are not equal, but we also see that the penalty for the two hypotheses differ. Since the log          # likelihood (loglik) for both hypotheses are the same, the GORICA weights are solely based on the penalty values. Consequently, the GORICA weights equal # the penalty weights, as we will see by using the following code:
+# Here, we see GORICA weights (gorica.weights) that are not equal, but we also see that the penalty for the two hypotheses differ. Since the log          
+# likelihood (loglik) for both hypotheses are the same, the GORICA weights are solely based on the penalty values. Consequently, the GORICA weights equal 
+# the penalty weights, as we will see by using the following code:
 
 GORICA_weights1 <- goricaResult2$result[,5]
 Penalty_weights1 <- IC.weights(2*goricaResult2$result[,3])$IC.weights
@@ -163,5 +187,9 @@ Penalty_weights1 <- IC.weights(2*goricaResult2$result[,3])$IC.weights
 # > Penalty_weights1
 # [1] 0.751  0.249
 
-# Here, we see that the penalty weights do not show equal support (like in Step 6 in the bivariate example), which is the case because the                # penalty/complexity of the hypotheses differ. In this example, the penalty weights resemble even equal the GORICA weights. Hence, this indicate that     # there is support for the overlap of the hypotheses, which comes down here to the boundary of the two hypotheses. Notably, the closer the resemblance,   # the more support for the overlap/boundary(the exact support can be quantified by inspecting such an hypothesis, here, an equal-effects hypothesis).     # Thus, the support for the boundary is less evident than in the example in Step 6, but by inspecting the penalty weights it does become clear.
+# Here, we see that the penalty weights do not show equal support (like in Step 6 in the bivariate example), which is the case because the                
+# penalty/complexity of the hypotheses differ. In this example, the penalty weights resemble even equal the GORICA weights. Hence, this indicate that     
+# there is support for the overlap of the hypotheses, which comes down here to the boundary of the two hypotheses. Notably, the closer the resemblance,   
+# the more support for the overlap/boundary(the exact support can be quantified by inspecting such an hypothesis, here, an equal-effects hypothesis).     
+# Thus, the support for the boundary is less evident than in the example in Step 6, but by inspecting the penalty weights it does become clear.
 
