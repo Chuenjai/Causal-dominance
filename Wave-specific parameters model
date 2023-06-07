@@ -1,1 +1,159 @@
+# Causal-dominance
+How to evaluate causal dominance in lagged effects models
 
+# R code to run a `wave-specific' parameters model
+# We display the R code for applying the GORICA to a bivariate wave-specific parameters RI-CLPM, like Masselink et al.(2018) use. 
+# That is, we allow for the standardized autoregressive parameters and the standardized cross-lagged parameters to change over time. 
+
+
+# Step 0: Install the packages in R by executing the following:
+
+install.packages("lavaan")
+install.packages("restriktor")
+install.packages("devtools")
+install_github("rebeccakuiper/ICweights")
+
+# Then, load the packages as follow:
+
+library(lavaan)  	
+library(restriktor) 
+library(devtools)
+library(ICweights) 	 
+
+# Step 1: Load the data set into R, where we assume that data set is called `data.dat'.
+
+data <- read.table("data.dat")
+
+# Note that we do not need to standardize data now (i.e., Step 2 of Appendix A is not needed here) since the parameters are allowed to change over time.
+
+# Step 2: Specify the causal dominance hypothesis of interest,
+
+H1b <- "abs(beta2) < abs(gamma2); abs(beta3) < abs(gamma3)". 
+
+# Label all of the standardized cross-lagged effects when fitting the data with RI-CLPM in lavaan} package. 
+# Since the standardized effects are allow to change over time, so use time-specific names (as in Figure 2), 
+# where `beta2' and `gamma2' are the standardized cross-lagged effects between the variables at time point 1 and time point 2, 
+# and `beta3' and `gamma3' are the standardized cross-lagged effects between the variables at time point 2 and time point 3.
+
+# Step 3: Fit the RI-CLPM using the R package lavaan.
+
+riclpmModel2<-'
+
+#Intercepts
+kappa =~ 1*x1 + 1*x2 + 1*x3
+omega =~ 1*y1 + 1*y2 + 1*y3
+
+x1 ~ mu1*1 	
+x2 ~ mu2*1
+x3 ~ mu3*1
+y1 ~ pi1*1
+y2 ~ pi2*1
+y3 ~ pi3*1
+
+# Variances and covariance of the random intercepts
+kappa  ~~ kappa 	# variance
+omega  ~~ omega 	# variance
+kappa  ~~ omega 	# covariance
+
+# Latent variables for autoregressive and cross-lagged
+effects
+p1 =~ 1*x1 #each factor loading set to 1
+p2 =~ 1*x2
+p3 =~ 1*x3
+q1 =~ 1*y1
+q2 =~ 1*y2
+q3 =~ 1*y3
+
+# Unconstrained autoregressive and cross-lagged effects
+# Specify the name of the standardized estimates which
+will be used in the hypothesis of interest in step 2
+p3 ~ alpha3*p2 + beta3*q2
+p2 ~ alpha2*p1 + beta2*q1
+q3 ~ delta3*q2 + gamma3*p2
+q2 ~ delta2*q1 + gamma2*p1
+p1 ~~ p1 
+p2 ~~ u2*p2
+p3 ~~ u3*p3
+q1 ~~ q1 
+q2 ~~ v2*q2
+q3 ~~ v3*q3
+p1 ~~ q1 
+p2 ~~ u2v2*q2 
+p3 ~~ u3v3*q3 '
+
+riclpm2 <- lavaan(riclpmModel2, data = data,
+missing = 'ML',
+int.ov.free = F,
+int.lv.free = F,
+auto.fix.first = F,
+auto.fix.single = F,
+auto.cov.lv.x = F,
+auto.cov.y = F,
+auto.var = F)
+
+# Step 4: Standardize parameter estimates for a fair comparison of parameters, one often needs the corresponding variables to be measured 
+# on the same scale. To make parameters comparable, it is often helpful (like in case of cross-lagged parameters referring to variables on different scales)
+# to inspect standardized parameters.
+
+StdEst <- standardizedsolution(riclpm2, type = "std.nox", 
+          se = TRUE, zstat = TRUE, pvalue = TRUE, 
+          ci = TRUE, level = 0.95, cov.std = TRUE, 
+          remove.eq = TRUE, remove.ineq = TRUE, 
+          remove.def = FALSE, partable = NULL, 
+          GLIST = NULL, est = NULL)
+
+# To obtain standardized estimates, we use the standardizedsolution() function in the lavaan package with `std.nox' as the type of standardization; 
+# in this type of standardization, the standardized estimates are based on both the variances of both (continuous) observed and latent variables, 
+# but not the variances of exogenous covariates.
+
+# Step 5: Extract the standardized cross-lagged estimates and their covariance matrix.
+
+est2  <- StdEst[c(25,29,23,27),5]
+names(est2) <- c("beta2", "gamma2", "beta3", "gamma3")
+
+vcov2 <- lavInspect(riclpm2, "vcov.std.nox")[c(13,17,11,15), c(13,17,11,15)]
+
+
+# By using the argument `vcov.std.nox', one obtains the variance covariance matrix of
+# the standardized estimated model parameters, where standardization is done with respect to both observed
+# and latent variables (and not the exogenous observed covariates). Note that, we cannot use the lavaan object like in Step 5 
+# in R code to run a `wave-independent' parameters model now, because then the unstandardized estimates will be used.
+
+# Step 6: Compute the GORICA values and weights using the goric() function from the restriktor package.
+
+goricaResult2 <- goric(est2, VCOV = vcov2, H1b, comparison = "complement", type = "gorica")
+
+# Below are the results for H1b compared with its complement.
+
+# restriktor (0.2-800): generalized order-restriced
+# information criterion approximation:
+
+# Results:
+# model       loglik  penalty  gorica  gorica.weights
+# H1b         8.410    2.977  -10.865          0.586
+# complement  8.607    3.523  -10.168          0.414
+
+# ---
+
+# The log likelihood value of the complement of H1b is higher than that of H1b, indicating that the estimates are not in agreement with H1b. 
+# However, the log likelihood values do seem to be close. Additionally, the GORICA weights show that H1b has 0.586/0.414 = 1.415 times more support than 
+# its complement. Hence, there is some support for the hypothesis which states that the cross-lagged effect of self-esteem on the depressive symptoms 
+# is stonger (in absolute sense) than the cross-lagged effect of depressive symptoms on the self-esteem. Nevertheless, the support for H1b versus 
+# its complement does not seem to be overwhelming. Thus, there is some evidence for H1b being the best hypothesis, but there is no compelling evidence.
+
+# Step 7: Compute the penalty weights using the IC.weights() function from the ICweights package.
+
+GORICA_weights2 <- goricaResult2$result[,5]
+Penalty_weights2 <- IC.weights(2*goricaResult2$result[,3])$IC.weights
+
+# Below, are the GORICA weights and the penalty weights for $H_{1b}$ and its complement.
+
+# > GORICA_weights2
+# [1] 0.586   0.414
+
+# > Penalty_weights2
+# [1] 0.633   0.367
+
+# Note that the penalty weights are not much different from the GORICA weights. This (given that the hypotheses per definition do not accept 
+# for their boundary) may indicate that there is support for the boundary of the hypotheses, that is, the hypothesis stating that 
+# the cross-lagged effects are the same for each time point.
