@@ -19,7 +19,7 @@ library(restriktor)
 
 data <- read.table("data.dat")
 
-# Note that we do not need to standardize data now (i.e., Step 2 of Appendix A is not needed here) since the parameters are allowed to change over time.
+# Note that we do not need to standardize data now, since the parameters are allowed to change over time.
 
 # Step 2: Specify the causal dominance hypothesis of interest,
 
@@ -32,7 +32,7 @@ H1b <- "abs(beta2) < abs(gamma2); abs(beta3) < abs(gamma3)".
 
 # Step 3: Fit the RI-CLPM using the R package lavaan.
 
-riclpmModel2<-'
+riclpmModel2 <-'
 
 #Intercepts
 kappa =~ 1*x1 + 1*x2 + 1*x3
