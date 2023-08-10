@@ -121,17 +121,16 @@ vcov2 <- lavInspect(riclpm2, "vcov.std.nox")[c(13,17,11,15), c(13,17,11,15)]
 
 # Step 6: Compute the GORICA values and weights using the goric() function from the restriktor package.
 
-goricaResult2 <- goric(est2, VCOV = vcov2, H1b, comparison = "complement", type = "gorica")
+goricaResult2 <- goric(est2, VCOV = vcov2, hypotheses = list(H1b), comparison = "complement", type = "gorica")
 
 # Below are the results for H1b compared with its complement.
 
-# restriktor (0.2-800): generalized order-restriced
-# information criterion approximation:
+# restriktor (0.5-20): generalized order-restriced information criterion approximation:
 
 # Results:
-# model       loglik  penalty  gorica  gorica.weights
-# H1b         8.410    2.977  -10.865          0.586
-# complement  8.607    3.523  -10.168          0.414
+# model       loglik  penalty  gorica  loglik.weights  penalty.weights  gorica.weights
+# H1b         8.410    2.977  -10.865          0.451          0.633          0.586
+# complement  8.607    3.523  -10.168          0.549          0.367          0.414
 
 # ---
 
@@ -140,11 +139,6 @@ goricaResult2 <- goric(est2, VCOV = vcov2, H1b, comparison = "complement", type 
 # its complement. Hence, there is some support for the hypothesis which states that the cross-lagged effect of self-esteem on the depressive symptoms 
 # is stonger (in absolute sense) than the cross-lagged effect of depressive symptoms on the self-esteem. Nevertheless, the support for H1b versus 
 # its complement does not seem to be overwhelming. Thus, there is some evidence for H1b being the best hypothesis, but there is no compelling evidence.
-
-# Step 7: Compute the penalty weights using the IC.weights() function from the ICweights package.
-
-GORICA_weights2 <- goricaResult2$result[,5]
-Penalty_weights2 <- IC.weights(2*goricaResult2$result[,3])$IC.weights
 
 # Below, are the GORICA weights and the penalty weights for $H_{1b}$ and its complement.
 
