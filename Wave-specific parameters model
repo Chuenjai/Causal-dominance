@@ -5,20 +5,15 @@ How to evaluate causal dominance in lagged effects models
 # We display the R code for applying the GORICA to a bivariate wave-specific parameters RI-CLPM, like Masselink et al.(2018) use. 
 # That is, we allow for the standardized autoregressive parameters and the standardized cross-lagged parameters to change over time. 
 
-
 # Step 0: Install the packages in R by executing the following:
 
 install.packages("lavaan")
 install.packages("restriktor")
-install.packages("devtools")
-install_github("rebeccakuiper/ICweights")
 
 # Then, load the packages as follow:
 
 library(lavaan)  	
 library(restriktor) 
-library(devtools)
-library(ICweights) 	 
 
 # Step 1: Load the data set into R, where we assume that data set is called `data.dat'.
 
@@ -112,7 +107,6 @@ est2  <- StdEst[c(25,29,23,27),5]
 names(est2) <- c("beta2", "gamma2", "beta3", "gamma3")
 
 vcov2 <- lavInspect(riclpm2, "vcov.std.nox")[c(13,17,11,15), c(13,17,11,15)]
-
 
 # By using the argument `vcov.std.nox', one obtains the variance covariance matrix of
 # the standardized estimated model parameters, where standardization is done with respect to both observed
