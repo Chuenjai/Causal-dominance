@@ -103,7 +103,7 @@ auto.var = F)
 
 # Step 5: Compute the GORICA values and weights using the goric() function from the restriktor package.
 
-goricaResult1 <- goric(riclpm1, H1a, comparison = "complement", type = "gorica")
+goricaResult1 <- goric(riclpm1, hypotheses = list(H1a), comparison = "complement", type = "gorica")
 summary(goricaResult1)
 
 # After fitting the data with RI-CLPM using lavaan package in R (here, called `riclpm1') then the goric function will be used, starting with              
