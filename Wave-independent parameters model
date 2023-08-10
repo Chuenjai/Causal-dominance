@@ -4,22 +4,17 @@ How to evaluate causal dominance in lagged effects models
 # R code to run a `wave-independent' parameters model
 
 # We display the R code for applying the GORICA to a bivariate wave-independent parameters RI-CLPM with three waves,     
-# using the R packages lavaan, restriktor, devtools, and ICweights.
+# using the R packages lavaan, restriktor.
 
 # Step 0: Install the packages in R by executing the following:
 
 install.packages("lavaan")
 install.packages("restriktor")
-install.packages("devtools")
-install_github("rebeccakuiper/ICweights")
 
 # Then, load the packages as follow:
 
 library(lavaan)  	
 library(restriktor) 
-library(devtools)
-library(ICweights) 	 
-
 
 # Step 1: Load the data set into R, where we assume that data set is called `data.dat'.
 
@@ -123,13 +118,12 @@ summary(goricaResult1)
 
 # Below are the results for H1a and its complement.
 
-# restriktor (0.2-800): generalized order-restriced
-# information criterion approximation:
+# restriktor (0.5-20): generalized order-restriced information criterion approximation:
 
 # Results:
-# model        loglik  penalty  gorica  gorica.weights
-# H1a          34.238    12.5  -43.475           0.502
-# complement   34.230    12.5  -43.460           0.498
+# model        loglik  penalty  gorica    loglik.weights  penalty.weights  gorica.weights
+# H1a          34.238    12.5  -43.475            0.502            0.500          0.502
+# complement   34.230    12.5  -43.460            0.498            0.500          0.498
 
 # ---
 
@@ -137,17 +131,12 @@ summary(goricaResult1)
 # both hypotheses are supported equally. Since both hypotheses have equal complexity, this means that there is support for their overlap, which here means 
 # their border. This implies that the cross-lagged effects are equal.
 
-# Step 6: Compute the penalty weights using the IC.weights() function from the ICweights package.
-
-GORICA_values <- goricaResult1$result[,5]
-Penalty_weights <- IC.weights(2*goricaResult1$result[,3])$IC.weights
-
 # Below, are the GORICA weights and the penalty weights for H1a and its complement.
 # > GORICA_weights
-# [1] 0.502 0.498
+# [1] 0.502      0.498
 
 # > Penalty_weights
-# [1] 0.5 0.5
+# [1] 0.5        0.5
 
 # Since the GORICA weights, in our example, resemble the penalty weights, there is evidence that indeed the overlap, here, boundary, of these hypotheses   
 # (i.e., stating that the two cross-lagged effects are equal) is true. Note that in this (bivariate) case, the complexity of the hypotheses are the same  
@@ -163,21 +152,17 @@ H5 <- "abs(phi12) < abs(phi21); abs(phi13) < abs(phi31);
 
 # For this data set, the goric function results:
 
-# restriktor (0.2-800): generalized order-restriced
-# information criterion approximation:
+# restriktor (0.5-20): generalized order-restriced information criterion approximation:
 
 # Results:
-# model        loglik  penalty   gorica  gorica.weights
-# H5           19.004    4.511  -28.985           0.751
-# complement   19.004    5.617  -26.774           0.249
+# model        loglik  penalty   gorica  loglik.weights  penalty.weights  gorica.weights
+# H5           19.004    4.511  -28.985        0.500             0.751          0.751
+# complement   19.004    5.617  -26.774        0.500             0.249          0.249
 # ---
 
 # Here, we see GORICA weights (gorica.weights) that are not equal, but we also see that the penalty for the two hypotheses differ. Since the log          
 # likelihood (loglik) for both hypotheses are the same, the GORICA weights are solely based on the penalty values. Consequently, the GORICA weights equal 
-# the penalty weights, as we will see by using the following code:
-
-GORICA_weights1 <- goricaResult2$result[,5]
-Penalty_weights1 <- IC.weights(2*goricaResult2$result[,3])$IC.weights
+# the penalty weights:
 
 # This results in the following GORICA weights and the penalty weights for H5 and its complement (for a trivariate case):
 
