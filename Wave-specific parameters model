@@ -133,15 +133,3 @@ goricaResult2 <- goric(est2, VCOV = vcov2, hypotheses = list(H1b), comparison = 
 # its complement. Hence, there is some support for the hypothesis which states that the cross-lagged effect of self-esteem on the depressive symptoms 
 # is stonger (in absolute sense) than the cross-lagged effect of depressive symptoms on the self-esteem. Nevertheless, the support for H1b versus 
 # its complement does not seem to be overwhelming. Thus, there is some evidence for H1b being the best hypothesis, but there is no compelling evidence.
-
-# Below, are the GORICA weights and the penalty weights for $H_{1b}$ and its complement.
-
-# > GORICA_weights2
-# [1] 0.586   0.414
-
-# > Penalty_weights2
-# [1] 0.633   0.367
-
-# Note that the penalty weights are not much different from the GORICA weights. This (given that the hypotheses per definition do not accept 
-# for their boundary) may indicate that there is support for the boundary of the hypotheses, that is, the hypothesis stating that 
-# the cross-lagged effects are the same for each time point.
